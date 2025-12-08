@@ -33,6 +33,7 @@ namespace Client.Pages.Users
                 FullName = user.FullName,
                 Email = user.Email,
                 Phone = user.Phone,
+                BirthDate = user.BirthDate,
                 Address = user.Address
             };
 

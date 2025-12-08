@@ -4,7 +4,7 @@
 
 <form method="get">
     <div class="input-group mb-3">
-        <input class="form-control" name="Search" value="@Model.Search" placeholder="Search..." />
+        <input class="form-control" name="Search" value="@Model.Search" placeholder="Search by name, code, email" />
         <button class="btn btn-primary">Search</button>
     </div>
 </form>
@@ -46,7 +46,8 @@
                     @(Model.SortBy == "email" ? (Model.Desc ? "▼" : "▲") : "")
                 </a>
             </th>
-
+            <th>Birth Date</th>
+            <th>Address</th>
             <th>Phone</th>
             <th></th>
         </tr>
@@ -60,6 +61,8 @@
                     <td>@u.Code</td>
                     <td>@u.FullName</td>
                     <td>@u.Email</td>
+                    <th>@u.BirthDate</th>
+                    <th>@u.Address</th>
                     <td>@u.Phone</td>
                     <td>
                         <a asp-page="Edit" asp-route-id="@u.Id" class="btn btn-warning btn-sm">Edit</a>
