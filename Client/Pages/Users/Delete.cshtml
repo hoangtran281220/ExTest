@@ -7,6 +7,9 @@
 </div>
 
 <form method="post">
-    <button class="btn btn-danger">Delete</button>
+    <button class="btn btn-danger"
+            onclick="return confirm('Xác nhận xóa?');">
+        Delete
+    </button>
     <a asp-page="Index" class="btn btn-secondary">Cancel</a>
 </form>
