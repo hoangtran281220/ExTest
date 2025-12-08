@@ -1,0 +1,105 @@
+﻿@page
+@model Client.Pages.Users.IndexModel
+<h2>User Management</h2>
+
+<form method="get">
+    <div class="input-group mb-3">
+        <input class="form-control" name="Search" value="@Model.Search" placeholder="Search..." />
+        <button class="btn btn-primary">Search</button>
+    </div>
+</form>
+
+<a class="btn btn-success mb-3" asp-page="Create">Create User</a>
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>
+                <a asp-page="Index"
+                   asp-route-Search="@Model.Search"
+                   asp-route-SortBy="code"
+                   asp-route-Desc="@(Model.SortBy == "code" ? !Model.Desc : false)"
+                   asp-route-PageIndex="1">
+                    Code
+                    @(Model.SortBy == "code" ? (Model.Desc ? "▼" : "▲") : "")
+                </a>
+            </th>
+
+            <th>
+                <a asp-page="Index"
+                   asp-route-Search="@Model.Search"
+                   asp-route-SortBy="fullname"
+                   asp-route-Desc="@(Model.SortBy == "fullname" ? !Model.Desc : false)"
+                   asp-route-PageIndex="1">
+                    Full Name
+                    @(Model.SortBy == "fullname" ? (Model.Desc ? "▼" : "▲") : "")
+                </a>
+            </th>
+
+            <th>
+                <a asp-page="Index"
+                   asp-route-Search="@Model.Search"
+                   asp-route-SortBy="email"
+                   asp-route-Desc="@(Model.SortBy == "email" ? !Model.Desc : false)"
+                   asp-route-PageIndex="1">
+                    Email
+                    @(Model.SortBy == "email" ? (Model.Desc ? "▼" : "▲") : "")
+                </a>
+            </th>
+
+            <th>Phone</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Data?.Items != null)
+        {
+            foreach (var u in Model.Data.Items)
+            {
+                <tr>
+                    <td>@u.Code</td>
+                    <td>@u.FullName</td>
+                    <td>@u.Email</td>
+                    <td>@u.Phone</td>
+                    <td>
+                        <a asp-page="Edit" asp-route-id="@u.Id" class="btn btn-warning btn-sm">Edit</a>
+                        <a asp-page="Delete" asp-route-id="@u.Id" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+@if (Model.Data != null)
+{
+    <div class="d-flex justify-content-between mt-3">
+        <div>
+            Page @Model.Data.PageIndex / @Model.Data.TotalPages
+        </div>
+
+        <div>
+            @if (Model.PageIndex > 1)
+            {
+                <a class="btn btn-outline-primary"
+                   asp-route-PageIndex="@(Model.PageIndex - 1)"
+                   asp-route-Search="@Model.Search"
+                   asp-route-SortBy="@Model.SortBy"
+                   asp-route-Desc="@Model.Desc">
+                    Prev
+                </a>
+            }
+
+            @if (Model.PageIndex < Model.Data.TotalPages)
+            {
+                <a class="btn btn-outline-primary"
+                   asp-route-PageIndex="@(Model.PageIndex + 1)"
+                   asp-route-Search="@Model.Search"
+                   asp-route-SortBy="@Model.SortBy"
+                   asp-route-Desc="@Model.Desc">
+                    Next
+                </a>
+            }
+        </div>
+    </div>
+}

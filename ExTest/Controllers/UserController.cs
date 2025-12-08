@@ -67,9 +67,21 @@ namespace API.Controllers
 
         // GET: api/user/paging?pageNumber=1&pageSize=10
         [HttpGet("paging")]
-        public async Task<IActionResult> GetPaged(int pageNumber = 1, int pageSize = 10)
+        public async Task<IActionResult> GetPaged(
+            [FromQuery] int pageIndex = 1,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] string? search = null,
+            [FromQuery] string? sortBy = "fullname",
+            [FromQuery] bool desc = false)
         {
-            return Ok(await _service.GetPagedAsync(pageNumber, pageSize));
+            var result = await _service.GetPagedAsync(
+                pageIndex,
+                pageSize,
+                search,
+                sortBy,
+                desc);
+
+            return Ok(result);
         }
     }
 }

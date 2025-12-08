@@ -1,6 +1,8 @@
 ﻿using Domain.Interfaces;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Share.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,21 +42,32 @@ namespace Infrastructure.RepositoriesImpl
         public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)
             => await _dbSet.Where(predicate).ToListAsync();
 
-        public virtual async Task<(IEnumerable<T> Items, int TotalItems)> GetPagedAsync(int pageNumber, int pageSize)
+        public async Task<PageResult<T>> GetPagedAsync(
+            Expression<Func<T, bool>>? filter = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+            int pageIndex = 1,
+            int pageSize = 10,
+            Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null)
         {
-            if (pageNumber <= 0) pageNumber = 1;
-            if (pageSize <= 0) pageSize = 10;
+            IQueryable<T> query = _dbSet.AsQueryable();
 
-            var query = _dbSet.AsQueryable();
+            if (filter != null)
+                query = query.Where(filter);
+
+            if (include != null)
+                query = include(query);
+
+            if (orderBy != null)
+                query = orderBy(query);
 
             var totalItems = await query.CountAsync();
 
             var items = await query
-                .Skip((pageNumber - 1) * pageSize)
+                .Skip((pageIndex - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
 
-            return (items, totalItems);
+            return new PageResult<T>(items, totalItems, pageIndex, pageSize);
         }
 
     }

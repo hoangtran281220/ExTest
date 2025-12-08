@@ -1,5 +1,5 @@
 ﻿using Application.DTOs;
-using Application.DTOs.Common;
+using Share.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +15,11 @@ namespace Application.Interfaces
         Task<ReadUserDTO> CreateAsync(CreateUserDTO dto);
         Task<ReadUserDTO?> UpdateAsync(Guid id, UpdateUserDTO dto);
         Task<bool> DeleteAsync(Guid id);
-        Task<PageResult<ReadUserDTO>> GetPagedAsync(int pageNumber, int pageSize);
-
+        Task<PageResult<ReadUserDTO>> GetPagedAsync(
+                    int pageIndex,
+                    int pageSize,
+                    string? search,
+                    string? sortBy,
+                    bool desc);
     }
 }

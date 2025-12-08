@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.Query;
+using Share.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -16,7 +18,12 @@ namespace Domain.Interfaces
         void Update(T entity);
         void Delete(T entity);
         Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate);
-        Task<(IEnumerable<T> Items, int TotalItems)> GetPagedAsync(int pageNumber, int pageSize);
+        Task<PageResult<T>> GetPagedAsync(
+            Expression<Func<T, bool>>? filter = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+            int pageIndex = 1,
+            int pageSize = 10,
+            Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null);
 
     }
 }

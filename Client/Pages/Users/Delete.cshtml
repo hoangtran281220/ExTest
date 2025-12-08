@@ -1,0 +1,12 @@
+﻿@page
+@model Client.Pages.Users.DeleteModel
+<h2>Delete User</h2>
+
+<div class="alert alert-danger">
+    Are you sure you want to delete user <strong>@Model.UserData?.FullName</strong>?
+</div>
+
+<form method="post">
+    <button class="btn btn-danger">Delete</button>
+    <a asp-page="Index" class="btn btn-secondary">Cancel</a>
+</form>

@@ -1,11 +1,12 @@
 ﻿using Application.DTOs;
-using Application.DTOs.Common;
 using Application.Interfaces;
 using Domain.Interfaces;
 using Domain.Models;
+using Share.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -121,11 +122,52 @@ namespace Application.Services
             return true;
         }
 
-        public async Task<PageResult<ReadUserDTO>> GetPagedAsync(int pageNumber, int pageSize)
+        public async Task<PageResult<ReadUserDTO>> GetPagedAsync(
+            int pageIndex,
+            int pageSize,
+            string? search,
+            string? sortBy,
+            bool desc)
         {
-            var (items, totalItems) = await _uow.Users.GetPagedAsync(pageNumber, pageSize);
+            // ========== SEARCH ==========
+            Expression<Func<User, bool>>? filter = null;
 
-            var mapped = items.Select(u => new ReadUserDTO
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                search = search.Trim().ToLower();
+
+                filter = u =>
+                    u.Code.ToLower().Contains(search) ||
+                    u.FullName.ToLower().Contains(search) ||
+                    (u.Email != null && u.Email.ToLower().Contains(search));
+            }
+
+            // ========== SORT ==========
+            Func<IQueryable<User>, IOrderedQueryable<User>>? orderBy = sortBy?.ToLower() switch
+            {
+                "code" => desc
+                    ? q => q.OrderByDescending(x => x.Code)
+                    : q => q.OrderBy(x => x.Code),
+
+                "email" => desc
+                    ? q => q.OrderByDescending(x => x.Email)
+                    : q => q.OrderBy(x => x.Email),
+
+                "fullname" or _ => desc
+                    ? q => q.OrderByDescending(x => x.FullName)
+                    : q => q.OrderBy(x => x.FullName),
+            };
+
+            // ========== CALL REPOSITORY (Repo làm paging) ==========
+            var paged = await _uow.Users.GetPagedAsync(
+                filter: filter,
+                orderBy: orderBy,
+                pageIndex: pageIndex,
+                pageSize: pageSize
+            );
+
+            // ========== MAP TO DTO ==========
+            var items = paged.Items.Select(u => new ReadUserDTO
             {
                 Id = u.Id,
                 Code = u.Code,
@@ -136,14 +178,7 @@ namespace Application.Services
                 Address = u.Address
             });
 
-            return new PageResult<ReadUserDTO>
-            {
-                Items = mapped,
-                TotalItems = totalItems,
-                PageNumber = pageNumber,
-                PageSize = pageSize,
-                TotalPages = (int)Math.Ceiling(totalItems / (double)pageSize)
-            };
+            return new PageResult<ReadUserDTO>(items, paged.TotalItems, pageIndex, pageSize);
         }
     }
 }
