@@ -7,7 +7,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Interfaces
+namespace Application.Interfaces.Irepository
 {
     //Generic repo chung cho các entity
     public interface IGenericRepository<T> where T : class
