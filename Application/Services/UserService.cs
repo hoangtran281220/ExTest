@@ -1,6 +1,6 @@
 ﻿using Application.DTOs;
 using Application.Interfaces;
-using Domain.Interfaces;
+using Application.Interfaces.Iservice;
 using Domain.Models;
 using Share.Common;
 using System;

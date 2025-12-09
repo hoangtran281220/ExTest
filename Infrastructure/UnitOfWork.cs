@@ -1,4 +1,5 @@
-﻿using Domain.Interfaces;
+﻿using Application.Interfaces;
+using Application.Interfaces.Irepository;
 using Infrastructure.Data;
 using System;
 using System.Collections.Generic;
